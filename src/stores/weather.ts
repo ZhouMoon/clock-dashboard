@@ -16,7 +16,7 @@ export const useWeatherStore = defineStore('weather', () => {
   const { language } = storeToRefs(configStore)
 
   // --- Persistent State ---
-  const locationMode = ref<LocationMode>('auto')
+  const locationMode = ref<LocationMode>('city')
   const customLat = ref(39.9)
   const customLon = ref(116.4)
   const customCity = ref('北京市')

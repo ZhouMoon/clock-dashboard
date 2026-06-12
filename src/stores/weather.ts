@@ -29,6 +29,7 @@ export const useWeatherStore = defineStore('weather', () => {
   const weatherData = ref<any>(null)
   const airQualityData = ref<any>(null)
   const loading = ref(false)
+  const weatherReady = ref(false)
   const locationText = ref(i18n.global.t('weather.status.locating'))
   const weatherInfo = ref<WeatherInfo>({ text: i18n.global.t('weather.status.loading'), icon: mapWmoCode(-1).icon })
   const cachedCoords = ref<{ lat: number, lon: number, city: string } | null>(null)
@@ -39,11 +40,13 @@ export const useWeatherStore = defineStore('weather', () => {
         .then((wData) => {
           weatherData.value = wData
           weatherInfo.value = mapWmoCode(wData.current.weather_code, wData.current.is_day === 1)
+          weatherReady.value = true
         })
         .catch((error) => {
           console.error('Weather API error:', error)
           weatherInfo.value.text = i18n.global.t('weather.status.apiError')
           weatherInfo.value.icon = mapWmoCode(-1).icon
+          weatherReady.value = false
         })
 
       const aqiPromise = fetchAirQualityData(lat, lon)
@@ -58,6 +61,7 @@ export const useWeatherStore = defineStore('weather', () => {
     }
     catch (error) {
       console.error('Update weather failed:', error)
+      weatherReady.value = false
     }
     finally {
       loading.value = false
@@ -169,6 +173,10 @@ export const useWeatherStore = defineStore('weather', () => {
         locationText.value = result.name
         await fetchWeather(result.latitude, result.longitude)
       }
+      else {
+        weatherReady.value = false
+        loading.value = false
+      }
       return
     }
 
@@ -240,6 +248,7 @@ export const useWeatherStore = defineStore('weather', () => {
     // Runtime
     weatherData,
     loading,
+    weatherReady,
     locationText,
     weatherInfo,
     airQualityData,

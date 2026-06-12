@@ -20,13 +20,13 @@ const currentPage = ref(1)
 const calendarRef = ref<any>(null)
 
 const weatherStore = useWeatherStore()
-const { weatherData, showRainEffect, showThunderEffect, showSnowEffect } = storeToRefs(weatherStore)
+const { weatherData, weatherReady, showRainEffect, showThunderEffect, showSnowEffect } = storeToRefs(weatherStore)
 
 const isSwiping = ref(false)
 
 // 判断是否需要渲染天气特效组件
 const shouldShowWeatherEffects = computed(() => {
-  if (!weatherData.value || layoutConfig.value.clockOnlyMode) return false
+  if (!weatherData.value || !weatherReady.value || layoutConfig.value.clockOnlyMode) return false
 
   const code = weatherData.value.current?.weather_code ?? -1
 

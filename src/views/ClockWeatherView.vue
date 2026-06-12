@@ -2,15 +2,17 @@
 import { useIdle } from '@vueuse/core'
 import { Settings } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Digit from '../components/Digit.vue'
 import Weather from '../components/Weather.vue'
 import { useTime } from '../hooks/useTime'
 import { useConfigStore } from '../stores/config'
+import { useWeatherStore } from '../stores/weather'
 
 const configStore = useConfigStore()
 const { clockConfig, layoutConfig, showDrawer, activeTab } = storeToRefs(configStore)
+const weatherStore = useWeatherStore()
 const { locale } = useI18n()
 
 const { h1, h2, m1, m2, s1, s2, lunar, now } = useTime({
@@ -52,6 +54,10 @@ const showSettingsButton = ref(true)
 const { idle } = useIdle(5 * 1000)
 watch(idle, (newIdle) => {
   showSettingsButton.value = !newIdle
+})
+
+onMounted(() => {
+  weatherStore.updateWeather()
 })
 </script>
 

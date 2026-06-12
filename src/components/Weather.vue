@@ -8,7 +8,7 @@ import { getAqiInfo } from '../utils/weather'
 import WeatherForecastModal from './WeatherForecastModal.vue'
 
 const weatherStore = useWeatherStore()
-const { weatherData, loading, locationText, weatherInfo, refreshInterval, airQualityData } = storeToRefs(weatherStore)
+const { weatherData, loading, weatherReady, locationText, weatherInfo, refreshInterval, airQualityData } = storeToRefs(weatherStore)
 const { t, locale } = useI18n()
 
 const showForecastModal = ref(false)
@@ -47,6 +47,7 @@ onUnmounted(() => {
 <template>
   <div
     id="weather-container"
+    v-if="weatherReady"
     class="weather-clickable px-12 flex justify-between w-full transition-opacity duration-700"
     :class="{ 'opacity-30': loading, 'opacity-100': !loading }"
     @click.stop.prevent="openForecast"
@@ -132,7 +133,7 @@ onUnmounted(() => {
     </div>
   </div>
 
-  <WeatherForecastModal :show="showForecastModal" @close="closeForecast" />
+  <WeatherForecastModal v-if="weatherReady" :show="showForecastModal" @close="closeForecast" />
 </template>
 
 <style scoped>
